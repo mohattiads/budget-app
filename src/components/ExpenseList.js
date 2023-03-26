@@ -16,7 +16,8 @@ const ExpenseList = ({ expenses }) => {
       
       {expenses.length > 0 && (
         <button className="btn">
-          clear expenses <DeleteIcon className="btn-icon"/>{" "}
+          clear expenses 
+          <DeleteIcon className="btn-icon"/>
         </button>
       )}
     </>

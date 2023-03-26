@@ -3,13 +3,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const ExpenseItem = ({expense}) => {
-  const {id,charge,amount}= expense
+  
   
   return (
     <li className="item">
       <div className="info">
-        <span className="expense">{charge} </span>
-        <span className="amount">$ {amount}</span>
+          <span className="expense">{expense &&expense.charge}</span>
+          <span className="amount">$ {expense &&expense.amount}</span>
       </div>
       
      <div>
@@ -17,7 +17,7 @@ const ExpenseItem = ({expense}) => {
          <EditIcon />
        </button>
       
-       <button className="delete-btn" aria-label="delete button">
+       <button className="clear-btn" aria-label="delete button">
          <DeleteIcon />{" "}
        </button>
      </div>
