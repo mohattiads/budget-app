@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import "./App.css";
 import Alert from "./components/Alert";
 import ExpenseForm from "./components/ExpenseForm";
@@ -6,11 +6,10 @@ import ExpenseItem from "./components/ExpenseItem";
 import ExpenseList from "./components/ExpenseList";
 import { v4 as uuidv4 } from "uuid";
 
-const initialExpenses = [
-  { id: uuidv4(), charge: "rent", amount: 1600 },
-  { id: uuidv4(), charge: "car peyment", amount: 200 },
-  { id: uuidv4(), charge: "credit card bill", amount: 100 },
-];
+// const initialExpenses = [];
+const initialExpenses =localStorage.getItem("expenses")?
+JSON.parse(localStorage.getItem("expenses")):[];  
+
 
 function App() {
   //! ************************ state values*************************
@@ -23,9 +22,21 @@ function App() {
   //? single amount
   const [amount, setAmount] = useState("");
 
-  //?  alert
-  const [alert, setAlert] = useState({ show: false });
+  //?  edit
+  const [edit, setEdit] = useState(false);
 
+  //?  edit item
+  const [id, setId] = useState(0);
+
+  //?  alert
+
+  const [alert, setAlert] = useState({ show: false });
+  //!: ************************ useEffect*************************
+  useEffect(()=>{
+
+      console.log("we called useEffect")
+      localStorage.setItem("expenses",JSON.stringify(expenses))
+  },[expenses])
   //todo: ************************ functionality*************************
 
   //? handle charge
@@ -55,15 +66,47 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (charge !== "" && amount > 0) {
-      const singleExpense = { id: uuidv4(), charge, amount };
-      setExpenses([...expenses, singleExpense]);
+      if (edit) {
+        let tempExpenses = expenses.map((item) => {
+          return item.id === id ? { ...item, charge, amount } : item;
+        });
+        setExpenses(tempExpenses);
+        setEdit(false);
+        handleAlert({ type: "success", text: "item edited" });
+      } else {
+        const singleExpense = { id: uuidv4(), charge, amount };
+        setExpenses([...expenses, singleExpense]);
+        handleAlert({ type: "success", text: "item added" });
+      }
       setCharge("");
       setAmount("");
-      handleAlert({ type: "success", text: "item added" });
     } else {
-      // todo://///////////////////////////////
       handleAlert({ type: "danger", text: "you didn't add any item " });
     }
+  };
+
+  //? clear all items
+  const clearItems = () => {
+    setExpenses([]);
+    handleAlert({ type: "danger", text: " All item deleted" });
+  };
+
+  //? handle delete items
+  const handleDelete = (id) => {
+    let tempExpenses = expenses.filter((item) => item.id !== id);
+    setExpenses(tempExpenses);
+    handleAlert({ type: "danger", text: "item deleted" });
+  };
+
+  //? handle edit items
+  const handleEdit = (id) => {
+    let expense = expenses.find((item) => item.id === id);
+    console.log(expense);
+    let { charge, amount } = expense;
+    setCharge(charge);
+    setAmount(amount);
+    setEdit(true);
+    setId(id);
   };
 
   // TODO: ************************ functionality*************************
@@ -80,9 +123,15 @@ function App() {
           handleCharge={handleCharge}
           handleAmount={handleAmount}
           handleSubmit={handleSubmit}
+          edit={edit}
         />
         <ExpenseItem />
-        <ExpenseList expenses={expenses} />
+        <ExpenseList
+          expenses={expenses}
+          clearItems={clearItems}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+        />
       </main>
       <h1>
         total spending : {""}

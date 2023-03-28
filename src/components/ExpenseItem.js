@@ -2,27 +2,31 @@ import React from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const ExpenseItem = ({expense}) => {
-  
-  
+const ExpenseItem = ({ amount, charge,id,handleDelete,handleEdit}) => {
   return (
-    <li className="item">
-      <div className="info">
-          <span className="expense">{expense &&expense.charge}</span>
-          <span className="amount">$ {expense &&expense.amount}</span>
-      </div>
-      
-     <div>
-       <button className="edit-btn" aria-label="edit button">
-         <EditIcon />
-       </button>
-      
-       <button className="clear-btn" aria-label="delete button">
-         <DeleteIcon />{" "}
-       </button>
-     </div>
-     
-    </li>
+    <>
+      {
+        (amount,
+        charge && (
+          <li className="item" hidden>
+            <div className="info">
+              <span className="expense">{charge}</span>
+              <span className="amount">$ {amount}</span>
+            </div>
+
+            <div>
+              <button className="edit-btn" aria-label="edit button" onClick={()=>handleEdit(id)}>
+                <EditIcon />
+              </button>
+
+              <button className="clear-btn" aria-label="delete button" onClick={()=>handleDelete(id)}>
+                <DeleteIcon />{" "}
+              </button>
+            </div>
+          </li>
+        ))
+      }
+    </>
   );
 };
 
